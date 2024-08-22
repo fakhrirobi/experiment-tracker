@@ -9,7 +9,7 @@ jobs:
     name: tracking-seruo
     runs-on: ubuntu-latest
     steps:
-        env:
+        - env:
           POSTGRES_USER: ${{ vars.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
@@ -19,7 +19,7 @@ jobs:
           MINIO_DEFAULT_BUCKETS: ${{ vars.MINIO_DEFAULT_BUCKETS }}
           SSH_ROOT: ${{ secrets.SSH_ROOT }}
           # MLflow
-        run: |
-          ssh $SSH_ROOT
+        - run: |
+            ssh $SSH_ROOT
 
      
