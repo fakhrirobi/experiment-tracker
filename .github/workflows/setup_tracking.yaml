@@ -2,7 +2,7 @@ name: tracking-server
 
 on:
   push:
-    branches: [ "aster" ]
+    branches: [ "master" ]
 
 jobs:
   tracking-setup:
