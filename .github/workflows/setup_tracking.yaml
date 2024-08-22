@@ -5,91 +5,21 @@ on:
     branches: [ "main" ]
 
 jobs:
-  pipeline-bfp:
-    name: pipeline-bfp
+  tracking-setup:
+    name: tracking-seruo
     runs-on: ubuntu-latest
     steps:
-      - name: Execute deployment command
-        uses: appleboy/ssh-action@v1.0.3
         env:
-          BFP_PIPELINE_PATH: ${{ vars.BFP_PIPELINE_PATH }}
-          GIT_URL: ${{ secrets.GIT_URL }}
-          DB_HOST_ODOO: ${{ secrets.DB_HOST_ODOO }}
-          DB_USER_ODOO: ${{ secrets.DB_USER_ODOO }}
-          DB_PASS_ODOO: ${{ secrets.DB_PASS_ODOO }}
-          DB_NAME_ODOO: ${{ vars.DB_NAME_ODOO }}
-          DB_HOST_WH: ${{ secrets.DB_HOST_WH }}
-          DB_USER_WH: ${{ secrets.DB_USER_WH }}
-          DB_PASS_WH: ${{ secrets.DB_PASS_WH }}
-          DB_NAME_WH_PROD: ${{ vars.DB_NAME_WH_PROD }}
-          DB_NAME_WH_STAGING: ${{ vars.DB_NAME_WH_STAGING }}
-          DB_NAME_WH_LOG: ${{ vars.DB_NAME_WH_LOG }}
-          DB_HOST_LMS: ${{ secrets.DB_HOST_LMS }}
-          DB_USER_LMS: ${{ secrets.DB_USER_LMS }}
-          DB_PASS_LMS: ${{ secrets.DB_PASS_LMS }}
-          DB_NAME_LMS: ${{ vars.DB_NAME_LMS }}
-          CRED_PATH: ${{ secrets.CRED_PATH }}
-          GS_KEY: ${{ secrets.GS_KEY }}
-          GS_KEY_TRIAL: ${{ secrets.GS_KEY_TRIAL }}
-          GS_KEY_BFP_NORMALIZE_OLD: ${{ secrets.GS_KEY_BFP_NORMALIZE_OLD }}
-          GS_KEY_BFP_NORMALIZE_NEW: ${{ secrets.GS_KEY_BFP_NORMALIZE_NEW }}
-          GS_WORKSHEET_REGISTRANT_NAME: ${{ secrets.GS_WORKSHEET_REGISTRANT_NAME }}
-          GS_KEY_PAYMENT: ${{ secrets.GS_KEY_PAYMENT }}
-          GS_KEY_INTERVIEW: ${{ secrets.GS_KEY_INTERVIEW }}
-          GS_KEY_SALES_MARKETING: ${{ secrets.GS_KEY_SALES_MARKETING }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-          STAGING_MODEL_PATH: ${{ secrets.STAGING_MODEL_PATH }}
-          WAREHOUSE_MODEL_PATH: ${{ secrets.WAREHOUSE_MODEL_PATH }}
-          REPORT_MODEL_PATH: ${{ secrets.REPORT_MODEL_PATH }}
-          MAPPING_PROVINCE_PATH: ${{ secrets.MAPPING_PROVINCE_PATH }}
-          MATTERMOST_WEBHOOK: ${{ secrets.MATTERMOST_WEBHOOK }}
+          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
 
-        with:
-          host: ${{ secrets.SSH_HOST_PROD }} # ip server
-          username: ${{ secrets.SSH_USER_NAME_PROD }} # ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY_PROD }} # isi dari pem key
-          envs: BFP_PIPELINE_PATH, GIT_URL, DB_HOST_ODOO, DB_USER_ODOO, DB_PASS_ODOO, DB_NAME_ODOO, DB_HOST_WH, DB_USER_WH, DB_PASS_WH, DB_NAME_WH_PROD, DB_NAME_WH_STAGING, DB_NAME_WH_LOG, DB_HOST_LMS, DB_USER_LMS, DB_PASS_LMS, DB_NAME_LMS, CRED_PATH, GS_KEY, GS_KEY_TRIAL, GS_KEY_BFP_NORMALIZE_OLD, GS_KEY_BFP_NORMALIZE_NEW,GS_WORKSHEET_REGISTRANT_NAME, GS_KEY_PAYMENT, GS_KEY_INTERVIEW, GS_KEY_SALES_MARKETING, SENTRY_DSN, STAGING_MODEL_PATH, WAREHOUSE_MODEL_PATH, REPORT_MODEL_PATH, MAPPING_PROVINCE_PATH, MATTERMOST_WEBHOOK
-          script: |
-            # Kalau direktori pipeline udah ada
-            if [[ -d "${BFP_PIPELINE_PATH}" ]]; then 
-              cd $BFP_PIPELINE_PATH
-              git pull origin main
-            else
-              ssh-keyscan github.com > ~/.ssh/known_hosts
-              git clone $GIT_URL $BFP_PIPELINE_PATH
-              cd $BFP_PIPELINE_PATH
-            fi
+          MINIO_ROOT_USER: ${{ vars.MINIO_ROOT_USER }}
+          MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
+          MINIO_DEFAULT_BUCKETS: ${{ vars.MINIO_DEFAULT_BUCKETS }}
+          SSH_ROOT: ${{ secrets.SSH_ROOT }}
+          # MLflow
+        run: |
+          ssh $SSH_ROOT
 
-            # If there are any envars update
-            echo "DB_HOST_ODOO=$DB_HOST_ODOO" > .env
-            echo "DB_USER_ODOO=$DB_USER_ODOO" >> .env
-            echo "DB_PASS_ODOO=$DB_PASS_ODOO" >> .env
-            echo "DB_NAME_ODOO=$DB_NAME_ODOO" >> .env
-            echo "DB_HOST_WH=$DB_HOST_WH" >> .env
-            echo "DB_USER_WH=$DB_USER_WH" >> .env
-            echo "DB_PASS_WH=$DB_PASS_WH" >> .env
-            echo "DB_NAME_WH_PROD=$DB_NAME_WH_PROD" >> .env
-            echo "DB_NAME_WH_STAGING=$DB_NAME_WH_STAGING" >> .env
-            echo "DB_NAME_WH_LOG=$DB_NAME_WH_LOG" >> .env
-            echo "DB_HOST_LMS=$DB_HOST_LMS" >> .env
-            echo "DB_USER_LMS=$DB_USER_LMS" >> .env
-            echo "DB_PASS_LMS=$DB_PASS_LMS" >> .env
-            echo "DB_NAME_LMS=$DB_NAME_LMS" >> .env
-            echo "CRED_PATH=$CRED_PATH" >> .env
-            echo "GS_KEY=$GS_KEY" >> .env
-            echo "GS_KEY_TRIAL=$GS_KEY_TRIAL" >> .env
-            echo "GS_KEY_BFP_NORMALIZE_OLD=$GS_KEY_BFP_NORMALIZE_OLD" >> .env
-            echo "GS_KEY_BFP_NORMALIZE_NEW=$GS_KEY_BFP_NORMALIZE_NEW" >> .env
-            echo "GS_WORKSHEET_REGISTRANT_NAME=$GS_WORKSHEET_REGISTRANT_NAME" >> .env
-            echo "GS_KEY_PAYMENT=$GS_KEY_PAYMENT" >> .env
-            echo "GS_KEY_INTERVIEW=$GS_KEY_INTERVIEW" >> .env
-            echo "GS_KEY_SALES_MARKETING=$GS_KEY_SALES_MARKETING" >> .env
-            echo "SENTRY_DSN=$SENTRY_DSN" >> .env
-            echo "STAGING_MODEL_PATH=$STAGING_MODEL_PATH" >> .env
-            echo "WAREHOUSE_MODEL_PATH=$WAREHOUSE_MODEL_PATH" >> .env
-            echo "REPORT_MODEL_PATH=$REPORT_MODEL_PATH" >> .env
-            echo "MAPPING_PROVINCE_PATH=$MAPPING_PROVINCE_PATH" >> .env
-            echo "MATTERMOST_WEBHOOK=$MATTERMOST_WEBHOOK" >> .env
-            
-            # Restart cron
-            sudo systemctl restart cron
+     
