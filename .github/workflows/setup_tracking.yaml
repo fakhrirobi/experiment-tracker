@@ -6,20 +6,21 @@ on:
 
 jobs:
   tracking-setup:
-    name: tracking-seruo
+    name: tracking-setup
     runs-on: ubuntu-latest
     steps:
-        - env:
-          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      - uses: actions/checkout@v4
+      - env:
+        POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
 
-          MINIO_ROOT_USER: ${{ vars.MINIO_ROOT_USER }}
-          MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
-          MINIO_DEFAULT_BUCKETS: ${{ vars.MINIO_DEFAULT_BUCKETS }}
-          SSH_ROOT: ${{ secrets.SSH_ROOT }}
-          # MLflow
-        - run: |
-            ssh $SSH_ROOT
+        MINIO_ROOT_USER: ${{ vars.MINIO_ROOT_USER }}
+        MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
+        MINIO_DEFAULT_BUCKETS: ${{ vars.MINIO_DEFAULT_BUCKETS }}
+        SSH_ROOT: ${{ secrets.SSH_ROOT }}
+        # MLflow
+      - run: |
+          ssh $SSH_ROOT
 
      
