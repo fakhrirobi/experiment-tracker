@@ -10,17 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - env:
-        POSTGRES_USER: ${{ vars.POSTGRES_USER }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      
+      - name: Set up environment variables
+        run: echo "Setting up environment variables"
+        env:
+          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          MINIO_ROOT_USER: ${{ vars.MINIO_ROOT_USER }}
+          MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
+          MINIO_DEFAULT_BUCKETS: ${{ vars.MINIO_DEFAULT_BUCKETS }}
+          SSH_ROOT: ${{ secrets.SSH_ROOT }}
 
-        MINIO_ROOT_USER: ${{ vars.MINIO_ROOT_USER }}
-        MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
-        MINIO_DEFAULT_BUCKETS: ${{ vars.MINIO_DEFAULT_BUCKETS }}
-        SSH_ROOT: ${{ secrets.SSH_ROOT }}
-        # MLflow
-      - run: |
+      - name: SSH into server
+        run: |
           ssh $SSH_ROOT
-
-     
