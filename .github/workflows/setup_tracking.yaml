@@ -27,7 +27,7 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
           envs: POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DB,MINIO_ROOT_USER,MINIO_ROOT_PASSWORD,MINIO_DEFAULT_BUCKETS,EXPERIMENT_TRACKER_PATH,GIT_URL
           script: |
             if [[ -d "${EXPERIMENT_TRACKER_PATH}" ]]; then 
