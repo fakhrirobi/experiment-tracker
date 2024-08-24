@@ -20,8 +20,31 @@ jobs:
           MINIO_ROOT_USER: ${{ vars.MINIO_ROOT_USER }}
           MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
           MINIO_DEFAULT_BUCKETS: ${{ vars.MINIO_DEFAULT_BUCKETS }}
-          SSH_ROOT: ${{ secrets.SSH_ROOT }}
+          EXPERIMENT_TRACKER_PATH: ${{ vars.EXPERIMENT_TRACKER_PATH }}
+          GIT_URL: ${{ vars.GIT_URL }}
 
       - name: SSH into server
-        run: |
-          ssh $SSH_ROOT
+      - uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST_2 }}
+          username: ${{ secrets.SSH_USERNAME_2 }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_2 }}
+          script: |
+            # Kalau direktori pipeline udah ada
+            if [[ -d "${EXPERIMENT_TRACKER_PATH}" ]]; then 
+              cd $EXPERIMENT_TRACKER_PATH
+              git pull origin master
+            else
+              git clone $GIT_URL $EXPERIMENT_TRACKER_PATH
+              cd $EXPERIMENT_TRACKER_PATH
+            fi
+
+            # writing .env 
+            echo "POSTGRES_USER=$POSTGRES_USER" >> .env
+            echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" >> .env
+            echo "POSTGRES_DB=$POSTGRES_DB" >> .env
+            echo "MINIO_ROOT_USER=$MINIO_ROOT_USER" >> .env
+            echo "MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD" >> .env
+            echo "MINIO_DEFAULT_BUCKETS=$MINIO_DEFAULT_BUCKETS" >> .env
+            
+            docker compose up -d
