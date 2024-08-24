@@ -22,23 +22,32 @@ jobs:
           MINIO_DEFAULT_BUCKETS: ${{ vars.MINIO_DEFAULT_BUCKETS }}
           EXPERIMENT_TRACKER_PATH: ${{ vars.EXPERIMENT_TRACKER_PATH }}
           GIT_URL: ${{ vars.GIT_URL }}
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deployment.pem
+          chmod 600 ~/.ssh/deployment.pem
+          cat >> ~/.ssh/config <<END
+          Host deploy_ec2
+            HostName ${{ secrets.SSH_HOST }}
+            User ${{ secrets.SSH_USERNAME }}
+            IdentityFile ~/.ssh/deployment.pem
+            StrictHostKeyChecking no
+          END
+      # - name: SSH into server
+      #   with:
+      #     host: ${{ secrets.SSH_HOST }}
+      #     username: ${{ secrets.SSH_USERNAME }}
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     envs: POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DB,MINIO_ROOT_USER,MINIO_ROOT_PASSWORD,MINIO_DEFAULT_BUCKETS,EXPERIMENT_TRACKER_PATH,GIT_URL
+      #     script: |
 
-      - name: SSH into server
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DB,MINIO_ROOT_USER,MINIO_ROOT_PASSWORD,MINIO_DEFAULT_BUCKETS,EXPERIMENT_TRACKER_PATH,GIT_URL
-          script: |
-
-            if [[ -d "${EXPERIMENT_TRACKER_PATH}" ]]; then 
-              cd $EXPERIMENT_TRACKER_PATH
-              git pull origin master
-            else
-              git clone $GIT_URL $EXPERIMENT_TRACKER_PATH
-              cd $EXPERIMENT_TRACKER_PATH
-            fi
+      #       if [[ -d "${EXPERIMENT_TRACKER_PATH}" ]]; then 
+      #         cd $EXPERIMENT_TRACKER_PATH
+      #         git pull origin master
+      #       else
+      #         git clone $GIT_URL $EXPERIMENT_TRACKER_PATH
+      #         cd $EXPERIMENT_TRACKER_PATH
+      #       fi
 
             
             echo "POSTGRES_USER=$POSTGRES_USER" >> .env
