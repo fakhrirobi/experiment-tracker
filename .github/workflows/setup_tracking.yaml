@@ -40,6 +40,7 @@ jobs:
       #     ssh deploy_vps "cd $EXPERIMENT_TRACKER_PATH"
       #     ssh deploy_vps "echo 'run successful' "
       - name: SSH into server
+        uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
