@@ -26,9 +26,9 @@ jobs:
       - name: SSH into server
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SSH_HOST_2 }}
-          username: ${{ secrets.SSH_USERNAME_2 }}
-          key: ${{ secrets.SSH_PRIVATE_KEY_2 }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           envs: POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DB,MINIO_ROOT_USER,MINIO_ROOT_PASSWORD,MINIO_DEFAULT_BUCKETS,EXPERIMENT_TRACKER_PATH,GIT_URL
           script: |
 
