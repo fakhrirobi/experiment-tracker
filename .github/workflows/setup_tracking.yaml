@@ -31,7 +31,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           envs: POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DB,MINIO_ROOT_USER,MINIO_ROOT_PASSWORD,MINIO_DEFAULT_BUCKETS,EXPERIMENT_TRACKER_PATH,GIT_URL
           script: |
-            # Kalau direktori pipeline udah ada
+
             if [[ -d "${EXPERIMENT_TRACKER_PATH}" ]]; then 
               cd $EXPERIMENT_TRACKER_PATH
               git pull origin master
